@@ -25,7 +25,7 @@ const registerStudent = async (req: Request, res: Response) => {
     }
 };
 
-const loginStudent = async (req: Request, res: Response) => {
+const loginStudent = async (req: Request, res: any) => {
     try {
         const { matricNo, password } = req.body;
 
@@ -42,14 +42,13 @@ const loginStudent = async (req: Request, res: Response) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
         const token = generateToken(student.id, student.role);
-        res.status(201).json({ token});
+        return res.status(201).json({ token});
 
     } catch (error) {
         console.error
-        res.status(500).json({ message: 'An error occurred while signing in the student.' });
+        return res.status(500).json({ message: 'An error occurred while signing in the student.' });
     }
 };
-
 
 const registerLecturer = async (req: Request, res: Response) => {
     try {
@@ -71,7 +70,7 @@ const registerLecturer = async (req: Request, res: Response) => {
     }
 };
 
-const loginLecturer = async (req: Request, res: Response) => {
+const loginLecturer = async (req: Request, res: any) => {
     try {
         const { email, password } = req.body;
 
@@ -88,11 +87,11 @@ const loginLecturer = async (req: Request, res: Response) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
         const token = generateToken(lecturer.id, lecturer.role);
-        res.status(201).json({ token});
+        return res.status(201).json({ token});
 
     } catch (error) {
         console.error
-        res.status(500).json({ message: 'An error occurred while signing in lecturer.' });
+        return res.status(500).json({ message: 'An error occurred while signing in lecturer.' });
     }
 };
 
