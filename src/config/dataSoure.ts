@@ -1,4 +1,3 @@
-// src/data-source.ts
 import { DataSource } from 'typeorm';
 import { Student } from '../models/STUDENT';
 import { Lecturer } from '../models/LECTURER';
