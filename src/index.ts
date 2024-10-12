@@ -3,8 +3,11 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 dotenv.config();
 
+import { connectDb } from "./config/db";
+
 const app = express();
 const PORT = process.env.PORT || 4567;
+connectDb();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
