@@ -24,9 +24,11 @@ CREATE TABLE LECTURER (
     id UUID PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     department_id UUID NOT NULL,
     courses_teaching VARCHAR(255),
     email VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'LECTURER',
     FOREIGN KEY (department_id) REFERENCES DEPARTMENT(id)
 );
 
@@ -35,12 +37,14 @@ CREATE TABLE STUDENT (
     id UUID PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     matric_number VARCHAR(50) UNIQUE NOT NULL,
     department_id UUID NOT NULL,
     course_of_study VARCHAR(255) NOT NULL,
     courses_taking VARCHAR(255),
     level VARCHAR(50) NOT NULL,
     email VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'STUDENT',
     FOREIGN KEY (department_id) REFERENCES DEPARTMENT(id)
 );
 

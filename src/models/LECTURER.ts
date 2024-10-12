@@ -11,6 +11,9 @@ export class Lecturer {
     first_name!: string;
 
     @Column()
+    password!: string;
+
+    @Column()
     last_name!: string;
 
     @ManyToOne(() => Department, department => department.lecturers)
@@ -18,6 +21,9 @@ export class Lecturer {
 
     @Column()
     email!: string;
+
+    @Column()
+    role: string = "lecturer";
 
     @OneToMany(() => Course, course => course.lecturer)
     courses_teaching!: Course[];

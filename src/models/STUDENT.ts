@@ -13,6 +13,9 @@ export class Student {
     @Column()
     last_name!: string;
 
+    @Column()
+    password!: string;
+
     @Column({ unique: true })
     matric_number!: string;
 
@@ -27,6 +30,9 @@ export class Student {
 
     @Column()
     email!: string;
+
+    @Column()
+    role: string = "student";
 
     @ManyToMany(() => Course)
     @JoinTable()
