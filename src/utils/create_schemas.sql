@@ -4,24 +4,27 @@ DROP TABLE IF EXISTS courses CASCADE;
 DROP TABLE IF EXISTS departments CASCADE;
 DROP TABLE IF EXISTS geofences CASCADE;
 DROP TABLE IF EXISTS lecturers CASCADE;
+DROP TABLE IF EXISTS student_course CASCADE;
+DROP TABLE IF EXISTS course_geofence CASCADE;
+DROP TABLE IF EXISTS students CASCADE;
 
--- Define ENUM types (if not defined yet)
-DROP TYPE IF EXISTS semester CASCADE;
+-- Drop existing types if they exist
+DROP TYPE IF EXISTS semester_order CASCADE;
 DROP TYPE IF EXISTS attendance_status CASCADE;
 
 -- Create Enum types
 CREATE TYPE semester_order AS ENUM ('1', '2');
 CREATE TYPE attendance_status AS ENUM ('PRESENT', 'ABSENT');
 
--- Create DEPARTMENT table
-CREATE TABLE DEPARTMENT (
-    id UUID PRIMARY KEY,
+-- Create DEPARTMENT table if it does not exist
+CREATE TABLE IF NOT EXISTS department (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     department_name VARCHAR(255) NOT NULL
 );
 
--- Create LECTURER table
-CREATE TABLE LECTURER (
-    id UUID PRIMARY KEY,
+-- Create LECTURER table if it does not exist
+CREATE TABLE IF NOT EXISTS lecturer (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -29,12 +32,12 @@ CREATE TABLE LECTURER (
     courses_teaching VARCHAR(255),
     email VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL DEFAULT 'LECTURER',
-    FOREIGN KEY (department_id) REFERENCES DEPARTMENT(id)
+    FOREIGN KEY (department_id) REFERENCES department(id)
 );
 
--- Create STUDENT table
-CREATE TABLE STUDENT (
-    id UUID PRIMARY KEY,
+-- Create STUDENT table if it does not exist
+CREATE TABLE IF NOT EXISTS student (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -45,59 +48,68 @@ CREATE TABLE STUDENT (
     level VARCHAR(50) NOT NULL,
     email VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL DEFAULT 'STUDENT',
-    FOREIGN KEY (department_id) REFERENCES DEPARTMENT(id)
+    FOREIGN KEY (department_id) REFERENCES department(id)
 );
 
--- Create COURSE table
-CREATE TABLE COURSE (
-    id UUID PRIMARY KEY,
+-- Create COURSE table if it does not exist
+CREATE TABLE IF NOT EXISTS course (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     lecturer_id UUID NOT NULL,
     course_code VARCHAR(50) UNIQUE NOT NULL,
     course_name VARCHAR(255) NOT NULL,
     venue UUID,
     qr_code VARCHAR(255),
-    semster semester_order NOT NULL,
+    semester semester_order NOT NULL,
     department_id UUID NOT NULL,
-    FOREIGN KEY (lecturer_id) REFERENCES LECTURER(id),
-    FOREIGN KEY (department_id) REFERENCES DEPARTMENT(id)
+    FOREIGN KEY (lecturer_id) REFERENCES lecturer(id),
+    FOREIGN KEY (department_id) REFERENCES department(id)
 );
 
--- Create ATTENDANCE table
-CREATE TABLE ATTENDANCE (
-    id UUID PRIMARY KEY,
+-- Create ATTENDANCE table if it does not exist
+CREATE TABLE IF NOT EXISTS attendance (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     lecturer_id UUID NOT NULL,
     student_id UUID NOT NULL,
     course_id UUID NOT NULL,
     date_class_was_held DATE NOT NULL,
     status attendance_status NOT NULL,
     check_in_time TIMESTAMP,
-    FOREIGN KEY (lecturer_id) REFERENCES LECTURER(id),
-    FOREIGN KEY (student_id) REFERENCES STUDENT(id),
-    FOREIGN KEY (course_id) REFERENCES COURSE(id)
+    FOREIGN KEY (lecturer_id) REFERENCES lecturer(id),
+    FOREIGN KEY (student_id) REFERENCES student(id),
+    FOREIGN KEY (course_id) REFERENCES course(id)
 );
 
--- Create GEOFENCE table
-CREATE TABLE GEOFENCE (
-    id UUID PRIMARY KEY,
+-- Create GEOFENCE table if it does not exist
+CREATE TABLE IF NOT EXISTS geofence (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL,
     radius FLOAT
 );
 
 -- Create junction table for COURSE and GEOFENCE (many-to-many relationship)
-CREATE TABLE COURSE_GEOFENCE (
+CREATE TABLE IF NOT EXISTS course_geofence (
     course_id UUID,
     geofence_id UUID,
     PRIMARY KEY (course_id, geofence_id),
-    FOREIGN KEY (course_id) REFERENCES COURSE(id),
-    FOREIGN KEY (geofence_id) REFERENCES GEOFENCE(id)
+    FOREIGN KEY (course_id) REFERENCES course(id),
+    FOREIGN KEY (geofence_id) REFERENCES geofence(id)
 );
 
 -- Create junction table for STUDENT and COURSE (many-to-many relationship)
-CREATE TABLE STUDENT_COURSE (
+CREATE TABLE IF NOT EXISTS student_course (
     student_id UUID,
     course_id UUID,
     PRIMARY KEY (student_id, course_id),
-    FOREIGN KEY (student_id) REFERENCES STUDENT(id),
-    FOREIGN KEY (course_id) REFERENCES COURSE(id)
+    FOREIGN KEY (student_id) REFERENCES student(id),
+    FOREIGN KEY (course_id) REFERENCES course(id)
 );
+
+-- INSERT DEPARTMENT DATA INTO DEPARTMENT TABLE
+-- Ensure to use UUIDs or generate them for the 'id' field
+INSERT INTO department (id, department_name) VALUES
+(gen_random_uuid(), 'Computer Science'),
+(gen_random_uuid(), 'Software Engineering'),
+(gen_random_uuid(), 'Computer Information System'),
+(gen_random_uuid(), 'Computer Technology'),
+(gen_random_uuid(), 'Information Technology');

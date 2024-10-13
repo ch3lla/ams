@@ -36,5 +36,5 @@ export class Student {
 
     @ManyToMany(() => Course)
     @JoinTable()
-    courses_taking!: Course[];
+    courses_taking?: Course[];
 }
