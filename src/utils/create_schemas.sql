@@ -113,3 +113,6 @@ INSERT INTO department (id, department_name) VALUES
 (gen_random_uuid(), 'Computer Information System'),
 (gen_random_uuid(), 'Computer Technology'),
 (gen_random_uuid(), 'Information Technology');
+
+
+-- \i 'C:\\Users\\HP\\Desktop\\proj\\ams\\src\\utils\\create_schemas.sql'
