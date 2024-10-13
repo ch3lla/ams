@@ -42,7 +42,7 @@ const loginStudent = async (req: Request, res: any) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
         const token = generateToken(student.id, student.role);
-        return res.status(201).json({ token});
+        return res.status(201).json({ accessTokrn: token });
 
     } catch (error) {
         console.error
@@ -87,7 +87,7 @@ const loginLecturer = async (req: Request, res: any) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
         const token = generateToken(lecturer.id, lecturer.role);
-        return res.status(201).json({ token});
+        return res.status(201).json({ accessToken: token});
 
     } catch (error) {
         console.error

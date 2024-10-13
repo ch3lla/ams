@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
 //routes
-app.use("/api", router);
+app.use("/api/v1", router);
 
 app.get("/", (req, res) => {  
   res.send("wE'RE UP!");
