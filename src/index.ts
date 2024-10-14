@@ -4,7 +4,7 @@ import morgan from "morgan";
 import router from "./routes/auth";
 dotenv.config();
 
-import { connectDb } from "./config/db";
+import connectDb from "./config/db";
 
 const app = express();
 const PORT = process.env.PORT || 4567;

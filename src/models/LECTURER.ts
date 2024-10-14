@@ -1,30 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
-import { Department } from "./DEPARTMENT";
-import { Course } from "./COURSE";
+import { Schema, model, Types, Document } from 'mongoose';
 
-@Entity()
-export class Lecturer {
-    @PrimaryGeneratedColumn("uuid")
-    id!: string;
-
-    @Column()
-    first_name!: string;
-
-    @Column()
-    password!: string;
-
-    @Column()
-    last_name!: string;
-
-    @ManyToOne(() => Department, department => department.lecturers)
-    department!: Department;
-
-    @Column()
-    email!: string;
-
-    @Column()
-    role: string = "lecturer";
-
-    @OneToMany(() => Course, course => course.lecturer)
-    courses_teaching!: Course[];
+interface ILecturer extends Document {
+    first_name: string;
+    last_name: string;
+    password: string;
+    department: Types.ObjectId;
+    email: string;
+    role: string;
+    courses_teaching: Types.ObjectId[];
 }
+
+const lecturerSchema = new Schema<ILecturer>({
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+    password: { type: String, required: true },
+    department: { type: Schema.Types.ObjectId, ref: 'Department', required: true },
+    email: { type: String, required: true, unique: true },
+    role: { type: String, default: 'lecturer' },
+    courses_teaching: [{ type: Schema.Types.ObjectId, ref: 'Course' }]
+});
+
+const Lecturer = model<ILecturer>('Lecturer', lecturerSchema);
+export default Lecturer;

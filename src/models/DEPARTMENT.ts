@@ -1,22 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
-import { Course } from "./COURSE";
-import { Lecturer } from "./LECTURER";
-import { Student } from "./STUDENT";
+import { Schema, model, Types, Document } from 'mongoose';
 
-@Entity()
-export class Department {
-    @PrimaryGeneratedColumn("uuid")
-    id!: string;
-
-    @Column()
-    department_name!: string;
-
-    @OneToMany(() => Lecturer, lecturer => lecturer.department)
-    lecturers!: Lecturer[];
-
-    @OneToMany(() => Student, student => student.department)
-    students!: Student[];
-
-    @OneToMany(() => Course, course => course.department)
-    courses!: Course[];
+interface IDepartment extends Document {
+    department_name: string;
+    lecturers: Types.ObjectId[];
+    students: Types.ObjectId[];
+    courses: Types.ObjectId[];
 }
+
+const departmentSchema = new Schema<IDepartment>({
+    department_name: { type: String, required: true },
+    lecturers: [{ type: Schema.Types.ObjectId, ref: 'Lecturer' }],
+    students: [{ type: Schema.Types.ObjectId, ref: 'Student' }],
+    courses: [{ type: Schema.Types.ObjectId, ref: 'Course' }]
+});
+
+const Department = model<IDepartment>('Department', departmentSchema);
+export default Department;

@@ -1,20 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
-import { Course } from "./COURSE";
+import { Schema, model, Document, Types } from 'mongoose';
 
-@Entity()
-export class Geofence {
-    @PrimaryGeneratedColumn("uuid")
-    id!: string;
-
-    @Column("float")
-    latitude!: number;
-
-    @Column("float")
-    longitude!: number;
-
-    @Column("float")
-    radius!: number;
-
-    @ManyToMany(() => Course)
-    courses!: Course[];
+interface IGeofence extends Document {
+    latitude: number;
+    longitude: number;
+    radius: number;
+    courses: Types.ObjectId[];
 }
+
+const geofenceSchema = new Schema<IGeofence>({
+    latitude: { type: Number, required: true },
+    longitude: { type: Number, required: true },
+    radius: { type: Number, required: true },
+    courses: [{ type: Schema.Types.ObjectId, ref: 'Course' }]
+});
+
+const Geofence = model<IGeofence>('Geofence', geofenceSchema);
+export default Geofence;
