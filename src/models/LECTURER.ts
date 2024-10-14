@@ -1,5 +1,7 @@
-import { Schema, model, Types, Document } from 'mongoose';
-import { compare, hash } from 'bcrypt'
+import { Schema, model, Model, Types, Document } from 'mongoose';
+import { compare, hash } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
+import 'dotenv/config';
 
 interface ILecturer extends Document {
     first_name: string;
@@ -9,6 +11,12 @@ interface ILecturer extends Document {
     email: string;
     role: string;
     courses_teaching: Types.ObjectId[];
+    generateAuthToken: () => Promise<{ token: string }>;
+    findByCredentials: () => Promise<{ user: ILecturer}>
+}
+
+interface ILecturerModel extends Model<ILecturer> {
+  findByCredentials(email: string, password: string): Promise<ILecturer>;
 }
 
 const lecturerSchema = new Schema<ILecturer>({
@@ -21,7 +29,13 @@ const lecturerSchema = new Schema<ILecturer>({
     courses_teaching: [{ type: Schema.Types.ObjectId, ref: 'Course' }]
 });
 
-lecturerSchema.statics.findByCredentials = async (email, password) => {
+lecturerSchema.methods.generateAuthToken = async function () {
+  const user = this;
+  const token = sign({ _id: user._id.toString(), role: user.role }, process.env.JWT_SECRET_KEY!, { expiresIn: '5h' });
+  return { token };
+};
+
+lecturerSchema.statics.findByCredentials = async (email: string, password: string): Promise<ILecturer> => {
     const user = await Lecturer.findOne({ email });
     if (!user) {
       throw new Error('This email has not been registered on our system.');
@@ -34,12 +48,12 @@ lecturerSchema.statics.findByCredentials = async (email, password) => {
 };
   
 lecturerSchema.pre('save', async function (next) {
-    const user = this;
+    const user = this as ILecturer;
     if (user.isModified('password')) {
       user.password = await hash(user.password, 8);
     }
     next();
 });
 
-const Lecturer = model<ILecturer>('Lecturer', lecturerSchema);
+const Lecturer = model<ILecturer, ILecturerModel>('Lecturer', lecturerSchema);
 export default Lecturer;

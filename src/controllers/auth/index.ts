@@ -1,23 +1,26 @@
 import { Request, Response } from 'express';
-import { Student } from '../../models/STUDENT';
-import bcrypt from 'bcrypt';
-import { AppDataSource } from '../../config/dataSoure';
-import { generateToken } from '../../middleware/auth';
-import { Lecturer } from '../../models/LECTURER';
+import Student from '../../models/STUDENT';
+import Lecturer from '../../models/LECTURER';
+import Department from '../../models/DEPARTMENT';
 
 const registerStudent = async (req: Request, res: Response) => {
+    const studentData = req.body;
+        const alreadyExists = await Student.findOne({ matric_number: req.body.matric_number});
+
+        if (alreadyExists) {
+            res.status(400).json({ message: 'This matric_number belongs to an account.' });
+            return;
+          }
+
     try {
-        const { password, ...studentData } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const studentRepository = AppDataSource.getRepository(Student);
-        const student = studentRepository.create({
-            ...studentData,
-            password: hashedPassword,
-        });
-
-        await studentRepository.save(student);
-        res.status(201).json({ message: "Student registered successfully" });
+        if (typeof studentData !== 'object' || Object.keys(studentData).length === 0) {
+            res.status(400).json({ message: 'Please fill all the required fields' });
+            return;
+          }
+        const student = new Student(studentData);
+        await student.save();
+        const token = await student.generateAuthToken();
+        res.status(201).json({ message: "Student registered successfully", accessToken: token });
 
     } catch (error) {
         console.error(error);
@@ -28,21 +31,14 @@ const registerStudent = async (req: Request, res: Response) => {
 const loginStudent = async (req: Request, res: any) => {
     try {
         const { matricNo, password } = req.body;
-
-        const studentRepository = AppDataSource.getRepository(Student);
-        const student = await studentRepository.findOne({ where: {matric_number: matricNo} });
+        const student = await Student.findByCredentials(matricNo, password);
 
         if (!student) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        const isPasswordValid = await bcrypt.compare(password, student.password);
-    
-        if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Invalid credentials' });
-        }
-        const token = generateToken(student.id, student.role);
-        return res.status(201).json({ accessTokrn: token });
+        const token = student.generateAuthToken();
+        return res.status(201).json({ mesage: "Login successful", accessToken: token });
 
     } catch (error) {
         console.error
@@ -51,18 +47,17 @@ const loginStudent = async (req: Request, res: any) => {
 };
 
 const registerLecturer = async (req: Request, res: Response) => {
-    try {
-        const { password, ...lecturerData } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
+    const lecturerData = req.body;
+    const alreadyExists = await Lecturer.findOne({ email: req.body.email });
+    if (alreadyExists){
+        return res.status(400).json({ message: "email taken!"});
+    }
+    try {      
 
-        const lecturerRepository = AppDataSource.getRepository(Lecturer);
-        const lecturer = lecturerRepository.create({
-            ...lecturerData,
-            password: hashedPassword,
-        });
-
-        await lecturerRepository.save(lecturer);
-        res.status(201).json({ message: "Lecturer registered successfully" });
+        const lecturer = new Lecturer(lecturerData);
+        await lecturer.save();
+        const token = lecturer.generateAuthToken();
+        res.status(201).json({ message: "Lecturer registered successfully", accessToken: token });
 
     } catch (error) {
         console.error
@@ -73,21 +68,13 @@ const registerLecturer = async (req: Request, res: Response) => {
 const loginLecturer = async (req: Request, res: any) => {
     try {
         const { email, password } = req.body;
-
-        const lecturerRepository = AppDataSource.getRepository(Lecturer);
-        const lecturer = await lecturerRepository.findOne({ where: {email: email} });
+        const lecturer = await Lecturer.findByCredentials(email, password);
 
         if (!lecturer) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-
-        const isPasswordValid = await bcrypt.compare(password, lecturer.password);
-    
-        if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Invalid credentials' });
-        }
-        const token = generateToken(lecturer.id, lecturer.role);
-        return res.status(201).json({ accessToken: token});
+        const token = lecturer.generateAuthToken();
+        return res.status(201).json({ mesage: "Login successful", accessToken: token});
 
     } catch (error) {
         console.error

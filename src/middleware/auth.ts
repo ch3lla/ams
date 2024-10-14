@@ -6,7 +6,7 @@ export const authenticate = (req: any, res: Response, next: NextFunction) => {
     if (!token) return res.status(401).json({ message: "Access denied" });
 
     try {
-        const decoded = verify(token, process.env.JWT_SECRET!);
+        const decoded = verify(token, process.env.JWT_SECRET_KEY!);
         req.user = decoded;
         next();
     } catch (error) {
@@ -15,5 +15,5 @@ export const authenticate = (req: any, res: Response, next: NextFunction) => {
 };
 
 export const generateToken = (id: string, role: string) => {
-    return sign({ id, role }, process.env.JWT_SECRET!, { expiresIn: "1h" });
+    return sign({ id, role }, process.env.JWT_SECRET_KEY!, { expiresIn: "1h" });
 };

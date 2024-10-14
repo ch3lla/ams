@@ -1,6 +1,7 @@
-import { Schema, model, Types, Document } from 'mongoose';
+import { Schema, model, Model, Types, Document } from 'mongoose';
 import { compare, hash } from 'bcrypt'
 import { sign } from 'jsonwebtoken';
+import 'dotenv/config';
 
 interface IStudent extends Document {
     first_name: string;
@@ -12,6 +13,14 @@ interface IStudent extends Document {
     level: string;
     email: string;
     role: string;
+
+    generateAuthToken: () => Promise<{ token: string }>;
+    findByCredentials: () => Promise<{ user: IStudent}>
+}
+
+// Create a type for the static methods
+interface IStudentModel extends Model<IStudent> {
+    findByCredentials(email: string, password: string): Promise<IStudent>;
 }
 
 const studentSchema = new Schema<IStudent>({
@@ -29,11 +38,11 @@ const studentSchema = new Schema<IStudent>({
 
 studentSchema.methods.generateAuthToken = async function () {
     const user = this;
-    const token = sign({ _id: user._id.toString() }, process.env.JWT_SECRET!, { expiresIn: '5h' });
+    const token = sign({ _id: user._id.toString(), role: user.role }, process.env.JWT_SECRET_KEY!, { expiresIn: '5h' });
     return { token };
 };
 
-studentSchema.statics.findByCredentials = async (matric_number, password) => {
+studentSchema.statics.findByCredentials = async (matric_number: string, password: string): Promise<IStudent> => {
     const user = await Student.findOne({ matric_number });
     if (!user) {
       throw new Error('This email has not been registered on our system.');
@@ -53,5 +62,5 @@ studentSchema.pre('save', async function (next) {
     next();
 });
 
-const Student = model<IStudent>('Student', studentSchema);
+const Student = model<IStudent, IStudentModel>('Student', studentSchema);
 export default Student;
