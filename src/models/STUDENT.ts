@@ -39,7 +39,8 @@ const studentSchema = new Schema<IStudent>({
 studentSchema.methods.generateAuthToken = async function () {
     const user = this;
     const token = sign({ _id: user._id.toString(), role: user.role }, process.env.JWT_SECRET_KEY!, { expiresIn: '5h' });
-    return { token };
+    console.log(token)
+    return token;
 };
 
 studentSchema.statics.findByCredentials = async (matric_number: string, password: string): Promise<IStudent> => {

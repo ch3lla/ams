@@ -32,7 +32,7 @@ const lecturerSchema = new Schema<ILecturer>({
 lecturerSchema.methods.generateAuthToken = async function () {
   const user = this;
   const token = sign({ _id: user._id.toString(), role: user.role }, process.env.JWT_SECRET_KEY!, { expiresIn: '5h' });
-  return { token };
+  return token;
 };
 
 lecturerSchema.statics.findByCredentials = async (email: string, password: string): Promise<ILecturer> => {

@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import Student from '../../models/STUDENT';
 import Lecturer from '../../models/LECTURER';
-import Department from '../../models/DEPARTMENT';
 
 const registerStudent = async (req: Request, res: Response) => {
     const studentData = req.body;
@@ -30,14 +29,14 @@ const registerStudent = async (req: Request, res: Response) => {
 
 const loginStudent = async (req: Request, res: any) => {
     try {
-        const { matricNo, password } = req.body;
-        const student = await Student.findByCredentials(matricNo, password);
+        const { matric_number, password } = req.body;
+        const student = await Student.findByCredentials(matric_number, password);
 
         if (!student) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        const token = student.generateAuthToken();
+        const token = await student.generateAuthToken();
         return res.status(201).json({ mesage: "Login successful", accessToken: token });
 
     } catch (error) {
@@ -73,7 +72,7 @@ const loginLecturer = async (req: Request, res: any) => {
         if (!lecturer) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-        const token = lecturer.generateAuthToken();
+        const token = await lecturer.generateAuthToken();
         return res.status(201).json({ mesage: "Login successful", accessToken: token});
 
     } catch (error) {
