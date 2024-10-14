@@ -14,7 +14,7 @@ router.post('/auth/lecturers/login', loginLecturer);
 router.post('/lecturers/addCourse', authenticateLecturer, addCourse);
 router.get('/lecturers/courses', authenticateLecturer, viewAllCourses);
 router.get('/lecturers/courses/:courseId', authenticateLecturer, getSingleCourse);
-router.patch('/lecturer/courses/:courseId', authenticateLecturer, updateCourse);
+router.patch('/lecturers/courses/:courseId', authenticateLecturer, updateCourse);
 router.delete('/lecturers/courses/:courseId', authenticateLecturer, removeCourse);
 
 export default router;

@@ -49,7 +49,7 @@ const viewAllCourses = async (req: any, res: any) => {
         res.status(200).json(coursesUnderLecturer);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error adding course' });
+        res.status(500).json({ message: 'Error getting courses' });
     }
 };
 
@@ -77,7 +77,7 @@ const getSingleCourse = async (req: any, res: any) => {
         res.status(200).json(singleCourse);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error adding course' });
+        res.status(500).json({ message: 'Error getting course' });
     }
 };
 
