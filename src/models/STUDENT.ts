@@ -33,8 +33,4 @@ export class Student {
 
     @Column()
     role: string = "student";
-
-    @ManyToMany(() => Course)
-    @JoinTable()
-    courses_taking?: Course[];
 }

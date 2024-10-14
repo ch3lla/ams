@@ -20,7 +20,7 @@ const registerStudent = async (req: Request, res: Response) => {
         res.status(201).json({ message: "Student registered successfully" });
 
     } catch (error) {
-        console.error
+        console.error(error);
         res.status(500).json({ message: 'An error occurred while registering the student.' });
     }
 };
