@@ -1,4 +1,5 @@
 import { Schema, model, Types, Document } from 'mongoose';
+import { compare, hash } from 'bcrypt'
 
 interface ILecturer extends Document {
     first_name: string;
@@ -18,6 +19,26 @@ const lecturerSchema = new Schema<ILecturer>({
     email: { type: String, required: true, unique: true },
     role: { type: String, default: 'lecturer' },
     courses_teaching: [{ type: Schema.Types.ObjectId, ref: 'Course' }]
+});
+
+lecturerSchema.statics.findByCredentials = async (email, password) => {
+    const user = await Lecturer.findOne({ email });
+    if (!user) {
+      throw new Error('This email has not been registered on our system.');
+    }
+    const isMatch = await compare(password, user.password);
+    if (!isMatch) {
+      throw new Error('Invalid password');
+    }
+    return user;
+};
+  
+lecturerSchema.pre('save', async function (next) {
+    const user = this;
+    if (user.isModified('password')) {
+      user.password = await hash(user.password, 8);
+    }
+    next();
 });
 
 const Lecturer = model<ILecturer>('Lecturer', lecturerSchema);
