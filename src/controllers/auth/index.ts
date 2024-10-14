@@ -45,7 +45,7 @@ const loginStudent = async (req: Request, res: any) => {
     }
 };
 
-const registerLecturer = async (req: Request, res: Response) => {
+const registerLecturer = async (req: Request, res: any) => {
     const lecturerData = req.body;
     const alreadyExists = await Lecturer.findOne({ email: req.body.email });
     if (alreadyExists){

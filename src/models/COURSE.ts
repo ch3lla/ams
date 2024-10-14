@@ -5,7 +5,7 @@ interface ICourse extends Document {
     course_code: string;
     course_name: string;
     qr_code?: string;
-    semster: '1' | '2';
+    semester: '1' | '2';
     department: Types.ObjectId;
     attendances: Types.ObjectId[];
     students: Types.ObjectId[];
@@ -17,7 +17,7 @@ const courseSchema = new Schema<ICourse>({
     course_code: { type: String, unique: true, required: true },
     course_name: { type: String, required: true },
     qr_code: { type: String, default: null },
-    semster: { type: String, enum: ['1', '2'], required: true },
+    semester: { type: String, enum: [1, 2], required: true },
     department: { type: Schema.Types.ObjectId, ref: 'Department', required: true },
     attendances: [{ type: Schema.Types.ObjectId, ref: 'Attendance' }],
     students: [{ type: Schema.Types.ObjectId, ref: 'Student' }],
