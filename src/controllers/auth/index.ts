@@ -55,7 +55,7 @@ const registerLecturer = async (req: Request, res: Response) => {
 
         const lecturer = new Lecturer(lecturerData);
         await lecturer.save();
-        const token = lecturer.generateAuthToken();
+        const token = await lecturer.generateAuthToken();
         res.status(201).json({ message: "Lecturer registered successfully", accessToken: token });
 
     } catch (error) {
