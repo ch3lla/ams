@@ -17,7 +17,7 @@ const courseSchema = new Schema<ICourse>({
   lecturer: { type: Schema.Types.ObjectId, ref: "Lecturer", required: true },
   course_code: { type: String, unique: true, required: true },
   course_name: { type: String, required: true },
-  qr_code: { type: String, default: null },
+  // qr_code: { type: String, default: null },
   semester: { type: String, enum: [1, 2], required: true },
   department: {
     type: Schema.Types.ObjectId,
