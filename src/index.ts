@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
-import router from "./routes/auth";
+import router from "./routes";
 dotenv.config();
 
 import connectDb from "./config/db";
