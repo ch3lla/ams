@@ -155,9 +155,7 @@ const generateQRCodeForCourse = async (req: any, res: any) => {
     const qrData = {
       courseId: course._id.toString(),
       courseName: course.course_name,
-      longitude: course.venue.longitude,
-      latitude: course.venue.latitude,
-      venue: course.venue.name_of_venue,
+      timeGenerated: new Date().toISOString()
     };
     const qrCode = await QRCode.toDataURL(JSON.stringify(qrData));
 
@@ -169,8 +167,8 @@ const generateQRCodeForCourse = async (req: any, res: any) => {
         });
     }
 
-    course.qr_code = qrCode;
-    await course.save();
+    // course.qr_code = qrCode;
+    // await course.save();
 
     res.status(200).json({ qrCode });
   } catch (error) {
