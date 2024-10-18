@@ -4,7 +4,7 @@ interface IAttendance extends Document {
     student: Types.ObjectId;
     course: Types.ObjectId;
     date_class_was_held: Date;
-    status: "PRESENT" | "ABSENT";
+    status: "PRESENT" | "ABSENT"; 
     check_in_time: Date;
 }
 
