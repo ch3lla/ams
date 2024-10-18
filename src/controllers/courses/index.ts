@@ -1,10 +1,8 @@
 import Course from "../../models/COURSE";
-import { Request, Response } from "express";
+import Venue from "../../models/VENUE";
 import Lecturer from "../../models/LECTURER";
 import getVenueCoordinates from "../venue";
 import QRCode from "qrcode";
-import Geofence from "../../models/GEOFENCE";
-
 const addCourse = async (req: any, res: any) => {
   const { _id } = req.user;
   const { course_code, course_name, venue, semester } = req.body;
@@ -147,7 +145,10 @@ const generateQRCodeForCourse = async (req: any, res: any) => {
   const { courseId } = req.params;
   const { _id } = req.user;
   try {
-    const course = (await Course.findOne({_id: courseId, lecturer: _id}).populate("venue")) as any;
+    const course = (await Course.findOne({_id: courseId, lecturer: _id}).populate({
+      path: "venue",
+      model: Venue,
+    })) as any;
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
