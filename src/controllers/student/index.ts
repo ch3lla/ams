@@ -3,29 +3,6 @@ import Course from "../../models/COURSE";
 import Student from "../../models/STUDENT";
 import Venue from "../../models/VENUE";
 
-const addStudent = async (req: any, res: any) => {
-  const { matric_number, first_name, last_name, department, level, email } = req.body;
-  if (!matric_number || !first_name || !last_name || !department || !level || !email) {
-    return res.status(400).json({ message: "Invalid parameters" });
-  }
-  try {
-    const student = new Student({
-      matric_number,
-      first_name,
-      last_name,
-      department,
-      level,
-      email
-    });
-
-    await student.save();
-    res.status(201).json({ message: "Student added successfully", student });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error adding student" });
-  }
-};
-
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
   const toRadians = (degree: number) => (degree * Math.PI) / 180;
 
@@ -99,6 +76,5 @@ const markAttendance = async (req: any, res: any) => {
 }
 
 export {
-    addStudent,
     markAttendance
 }
