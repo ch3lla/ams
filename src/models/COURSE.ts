@@ -1,5 +1,5 @@
 import { Schema, model, Types, Document } from "mongoose";
-import Geofence from "./GEOFENCE";
+import Venue from "./VENUE";
 
 interface ICourse extends Document {
   lecturer: Types.ObjectId;
@@ -26,7 +26,7 @@ const courseSchema = new Schema<ICourse>({
   },
   //attendances: [{ type: Schema.Types.ObjectId, ref: "Attendance" }],
   students: [{ type: Schema.Types.ObjectId, ref: "Student" }],
-  venue: { type: Schema.Types.ObjectId, ref: "Geofence" },
+  venue: { type: Schema.Types.ObjectId, ref: "Venue" },
 });
 
 const Course = model<ICourse>("Course", courseSchema);
