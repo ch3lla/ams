@@ -9,8 +9,10 @@ interface ICourse extends Document {
   semester: "1" | "2";
   department: Types.ObjectId;
   attendances: Types.ObjectId[];
-  students: Types.ObjectId[];
+  // students: Types.ObjectId[];
   venue: Types.ObjectId;
+  startTime: Date;
+  endTime: Date;
 }
 
 const courseSchema = new Schema<ICourse>({
@@ -25,8 +27,12 @@ const courseSchema = new Schema<ICourse>({
     required: true,
   },
   //attendances: [{ type: Schema.Types.ObjectId, ref: "Attendance" }],
-  students: [{ type: Schema.Types.ObjectId, ref: "Student" }],
+  // students: [{ type: Schema.Types.ObjectId, ref: "Student" }],
   venue: { type: Schema.Types.ObjectId, ref: "Venue" },
+  startTime: { type: Date, required: true }, // Single timestamp
+  endTime: { type: Date, required: true },
+}, {
+  timestamps: true
 });
 
 const Course = model<ICourse>("Course", courseSchema);

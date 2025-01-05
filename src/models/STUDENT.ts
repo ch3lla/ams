@@ -13,6 +13,7 @@ interface IStudent extends Document {
     level: string;
     email: string;
     role: string;
+    courses: Types.ObjectId[];
 
     generateAuthToken: () => Promise<{ token: string }>;
     findByCredentials: () => Promise<{ user: IStudent}>
@@ -32,7 +33,10 @@ const studentSchema = new Schema<IStudent>({
     course_of_study: { type: String, required: true },
     level: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    role: { type: String, default: 'student' }
+    role: { type: String, default: 'student' },
+    courses: [{ type: Schema.Types.ObjectId, ref: 'Course' }]
+}, {
+  timestamps: true
 });
 
 
@@ -46,7 +50,7 @@ studentSchema.methods.generateAuthToken = async function () {
 studentSchema.statics.findByCredentials = async (matric_number: string, password: string): Promise<IStudent> => {
     const user = await Student.findOne({ matric_number });
     if (!user) {
-      throw new Error('This email has not been registered on our system.');
+      throw new Error('This matric number has not been registered on our system.');
     }
     const isMatch = await compare(password, user.password);
     if (!isMatch) {

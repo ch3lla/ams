@@ -27,6 +27,8 @@ const lecturerSchema = new Schema<ILecturer>({
     email: { type: String, required: true, unique: true },
     role: { type: String, default: 'lecturer' },
     courses_teaching: [{ type: Schema.Types.ObjectId, ref: 'Course' }]
+}, {
+  timestamps: true
 });
 
 lecturerSchema.methods.generateAuthToken = async function () {

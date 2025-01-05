@@ -12,7 +12,9 @@ const venueSchema = new Schema<IVenue>({
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },
     radius: { type: Number, required: true }
-});
+}, {
+    timestamps: true
+  });
 
 const Venue = model<IVenue>('Venue', venueSchema);
 export default Venue;
