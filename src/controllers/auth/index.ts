@@ -29,9 +29,9 @@ const registerStudent = async (req: Request, res: Response) => {
 
 const loginStudent = async (req: Request, res: any) => {
     try {
-        const { matric_number, password } = req.body;
-        const student = await Student.findByCredentials(matric_number, password);
-
+        const { matricNo, password } = req.body;
+        const student = await Student.findByCredentials(matricNo, password);
+        
         if (!student) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
@@ -40,7 +40,7 @@ const loginStudent = async (req: Request, res: any) => {
         return res.status(200).json({ mesage: "Login successful", accessToken: token });
 
     } catch (error) {
-        console.error
+        console.error(error);
         return res.status(500).json({ message: 'An error occurred while signing in the student.' });
     }
 };

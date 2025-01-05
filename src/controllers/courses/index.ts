@@ -3,10 +3,12 @@ import Venue from "../../models/VENUE";
 import Lecturer from "../../models/LECTURER";
 import getVenueCoordinates from "../venue";
 import QRCode from "qrcode";
+import { time } from "console";
+
 const addCourse = async (req: any, res: any) => {
   const { _id } = req.user;
-  const { course_code, course_name, venue, semester } = req.body;
-  if (!course_code || !course_name || !venue || !semester) {
+  const { course_code, course_name, course_time, venue, semester } = req.body;
+  if (!course_code || !course_name || course_time || !venue || !semester) {
     return res.status(400).json({ message: "Invalid parameters" });
   }
   try {
@@ -22,6 +24,7 @@ const addCourse = async (req: any, res: any) => {
       semester: Number(semester),
       department: lecturer.department._id,
       venue: await getVenueCoordinates(venue), // Expecting venueIds to be an array
+      time: course_time,
     });
 
     await course.save();
