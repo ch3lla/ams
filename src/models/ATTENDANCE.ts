@@ -41,6 +41,9 @@ const attendanceSchema = new Schema<IAttendance>({
     timestamps: true
 });
 
+attendanceSchema.index({ student: 1, course: 1 });
+attendanceSchema.index({ updatedAt: -1 });
+
 const Attendance = model<IAttendance>('Attendance', attendanceSchema);
 
 export default Attendance;

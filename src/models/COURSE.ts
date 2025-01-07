@@ -11,8 +11,8 @@ interface ICourse extends Document {
   attendances: Types.ObjectId[];
   // students: Types.ObjectId[];
   venue: Types.ObjectId;
-  startTime: Date;
-  endTime: Date;
+  startTime: String;
+  endTime: String;
 }
 
 const courseSchema = new Schema<ICourse>({
@@ -29,8 +29,8 @@ const courseSchema = new Schema<ICourse>({
   //attendances: [{ type: Schema.Types.ObjectId, ref: "Attendance" }],
   // students: [{ type: Schema.Types.ObjectId, ref: "Student" }],
   venue: { type: Schema.Types.ObjectId, ref: "Venue" },
-  startTime: { type: Date, required: true }, // Single timestamp
-  endTime: { type: Date, required: true },
+  startTime: { type: String, required: true }, // Single timestamp
+  endTime: { type: String, required: true },
 }, {
   timestamps: true
 });

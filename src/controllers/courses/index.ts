@@ -3,7 +3,7 @@ import Venue from "../../models/VENUE";
 import Lecturer from "../../models/LECTURER";
 import getVenueCoordinates from "../venue";
 import QRCode from "qrcode";
-import { time } from "console";
+import "../../models/DEPARTMENT";
 
 const addCourse = async (req: any, res: any) => {
   const { _id } = req.user;
@@ -39,7 +39,7 @@ const viewAllCourses = async (req: any, res: any) => {
   const { _id } = req.user;
   try {
     const coursesUnderLecturer = await Course.find({ lecturer: _id })
-      .select("course_code course_name qr_code semester venue")
+      .select("_id course_code course_name qr_code semester venue start_time end_time")
       .populate({
         path: "venue",
         select: "name_of_venue",
@@ -65,7 +65,7 @@ const getSingleCourse = async (req: any, res: any) => {
   }
   try {
     const singleCourse = await Course.findOne({ _id: course_id, lecturer: _id })
-      .select("course_code course_name qr_code semester venue")
+      .select("_id course_code course_name qr_code semester venue")
       .populate({
         path: "department",
         select: "name",
