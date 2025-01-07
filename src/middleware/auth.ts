@@ -29,7 +29,7 @@ export const authenticateLecturer = (req: any, res: any, next: NextFunction) => 
     try {
         const decoded = verify(token, process.env.JWT_SECRET_KEY!);
         req.user = decoded;
-        if (req.user.role != "lecturer"){
+        if (req.user.role !== "lecturer"){
             res.status(400).json({ message: "Unauthorized" });
             return;
         }
@@ -50,7 +50,7 @@ export const authenticateStudent = (req: any, res: any, next: NextFunction) => {
     try {
         const decoded = verify(token, process.env.JWT_SECRET_KEY!);
         req.user = decoded;
-        if (req.user.role != "stdudent"){
+        if (req.user.role !== "student"){
             res.status(400).json({ message: "Unauthorized" });
             return;
         }

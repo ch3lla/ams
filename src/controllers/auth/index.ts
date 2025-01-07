@@ -81,9 +81,21 @@ const loginLecturer = async (req: Request, res: any) => {
     }
 };
 
+const verifyToken = async (req: any, res: any) => {
+        try {        
+            res.status(200).json({ isAuthenticated: true, role: req.user.role });
+        } catch (error) {
+            res.status(500).json({
+                status: 'error',
+                message: 'Error verifying token'
+            });
+        }
+}
+
 export {
     registerStudent,
     registerLecturer,
     loginStudent,
     loginLecturer,
+    verifyToken
 }
