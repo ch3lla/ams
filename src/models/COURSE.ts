@@ -11,8 +11,8 @@ interface ICourse extends Document {
   attendances: Types.ObjectId[];
   // students: Types.ObjectId[];
   venue: Types.ObjectId;
-  start_time: String;
-  end_time: String;
+  start_time: string;
+  end_time: string;
 }
 
 const courseSchema = new Schema<ICourse>({
