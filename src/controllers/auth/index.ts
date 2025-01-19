@@ -75,9 +75,14 @@ const loginLecturer = async (req: Request, res: any) => {
         const token = await lecturer.generateAuthToken();
         return res.status(200).json({ mesage: "Login successful", accessToken: token});
 
-    } catch (error) {
-        console.error
-        return res.status(500).json({ message: 'An error occurred while signing in lecturer.' });
+    } catch (error: any) {
+        console.error(error)
+        //todo: extrapolate error message to a helper function
+        if (error.message === 'This email has not been registered on our system.' || error.message === 'Invalid password') {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        } else {
+             return res.status(500).json({ message: 'An error occurred while signing in lecturer.' });
+        }       
     }
 };
 
