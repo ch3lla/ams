@@ -4,7 +4,7 @@ import { markAttendance, getAllCoursesOfferedByStudent, getSingleCourseOfferedBy
 const router = express.Router();
 
 router.post('/attendance', authenticateStudent, markAttendance);
-router.post('/courses', authenticateStudent, getAllCoursesOfferedByStudent);
+router.get('/courses', authenticateStudent, getAllCoursesOfferedByStudent);
 router.get('/courses/:courseId', authenticateStudent, getSingleCourseOfferedByStudent);
-
+  
 export default router;
