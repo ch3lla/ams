@@ -1,44 +1,40 @@
 import Course from "../../models/COURSE";
 import Venue from "../../models/VENUE";
 import Lecturer from "../../models/LECTURER";
-import getVenueCoordinates from "../venue";
+import { addVenueToSchema } from "../venue";
 import QRCode from "qrcode";
 import "../../models/DEPARTMENT";
 import Department from "../../models/DEPARTMENT";
+import mongoose from "mongoose";
 
-type course_department = {
-  1: "Computer Science";
-  2: "Software Engineering";
-  3: "Computer Information System";
-  4: "Computer Technology";
-  5: "Information Technology";
-}
 
 const addCourse = async (req: any, res: any) => {
   const { _id } = req.user;
-  const { course_code, course_name, course_start_time, course_end_time, course_venue, semester, course_department } = req.body;
-  if (!course_code || !course_name || !course_start_time || !course_end_time  || !semester || !course_department) {
+
+  const { course_code, course_name, course_start_time, course_end_time, course_venue_details, semester, course_department } = req.body;
+
+  if (!course_code || !course_name || !course_start_time || !course_end_time  || !semester || !course_department || !course_venue_details) {
     return res.status(400).json({ message: "Invalid parameters" });
   }
+
   try {
-    const lecturer = await Lecturer.findById(_id);
+    const lecturer = await Lecturer.findById(mongoose.Types.ObjectId.createFromHexString(_id));
     if (!lecturer) {
       return res.status(404).json({ message: "Lecturer not found" });
     }
 
-    const department = await Department.findOne({name: course_department[course_department] }); 
-
+    const department = await Department.findOne({name: course_department}); 
     if (!department) {
       return res.status(404).json({ message: "Department not found" });
     }
 
     const course = new Course({
       lecturer: _id,
-      course_code,
+      course_code: course_code.toUpperCase(),
       course_name,
       semester: Number(semester),
       department: department._id,
-      venue: await getVenueCoordinates(course_venue), // Expecting venueIds to be an array
+      venue: await addVenueToSchema(course_venue_details),
       start_time: course_start_time,
       end_time: course_end_time
     });

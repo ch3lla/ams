@@ -1,5 +1,7 @@
 import axios from 'axios';
 import 'dotenv/config';
+import Venue from '../../models/VENUE';
+import { ObjectId } from 'mongoose';
 
 /**
  * Function to get the coordinates (longitude and latitude) of a venue using Google Maps Geocoding API.
@@ -25,7 +27,7 @@ async function getVenueCoordinates(venueName: string): Promise<{ latitude: numbe
                 latitude: location.lat,
                 longitude: location.lng
             };
-            return await addVenueToSchema(venueName, venue);
+            return await addVenueToSchema({venueName, venue});
         } else {
             console.error('No results found for the specified venue.');
             return null;
@@ -83,15 +85,18 @@ async function getVenueCoordinates(venueName: string): Promise<{ latitude: numbe
 //     }
 // })();
 
-const addVenueToSchema = async (name: string, venue: any) => {
-    const classVenue = new venue({
-        name_of_venue: name,
-        latitude: venue.latitude,
-        longitude: venue.longitude,
+const addVenueToSchema = async (venue: any): Promise<ObjectId> => {
+    const classVenue = new Venue({
+        name_of_venue: venue.name,
+        latitude: venue.lat,
+        longitude: venue.long,
         radius: 20
     });
     await classVenue.save();
-    return classVenue._id;
+    return classVenue._id as ObjectId;
 };
 
-export default getVenueCoordinates;
+export {
+    getVenueCoordinates,
+    addVenueToSchema
+};
