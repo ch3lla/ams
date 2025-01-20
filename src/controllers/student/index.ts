@@ -33,7 +33,6 @@ const markAttendance = async (req: any, res: any) => {
     return res.status(401).json({ message: "Neccessary parameters are missing, try again"});
   }
   try {
-
     const currentTimestamp = new Date();
     
     const course = await Course.findById(mongoose.Types.ObjectId.createFromHexString(course_id)).populate({
@@ -43,6 +42,15 @@ const markAttendance = async (req: any, res: any) => {
 
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
+    }
+
+    const startTime = parseTimeStringToTime(course.start_time);
+    const validStartWindow = new Date(startTime!.getTime() + 15 * 60 * 1000);
+
+    // check if the student has marked attendance for the course today (rn)
+    const todaysAttendance = await Attendance.findOne({ student: _id, course: course_id, date_class_was_held: { $gte: startTime, $lte: validStartWindow, } });
+    if (todaysAttendance) {
+      return res.status(400).json({ message: "Attendance already marked for today" });
     }
 
     const end_time = parseTimeStringToTime(course.end_time);
@@ -145,7 +153,7 @@ const getSingleCourseOfferedByStudent = async (req: any, res: any) => {
       return res.status(400).json({ message: "Invalid parameters" });
     }
 
-    const attendanceRecord = await Attendance.find({ student: _id, course: course_id })
+    const attendanceRecords = await Attendance.find({ student: _id, course: course_id })
     .populate([
       {
         path: "course",
@@ -158,12 +166,33 @@ const getSingleCourseOfferedByStudent = async (req: any, res: any) => {
     ])
     .select("-student")
     .sort({ updatedAt: -1 })
-    .lean();
+    .lean() as any;
 
-    if (attendanceRecord.length <= 0) {
+
+    if (!attendanceRecords || attendanceRecords.length === 0) {
       return res.status(404).json({ message: "Attendance record not found" });
     }
-    res.status(200).json(attendanceRecord);
+
+    const attendance_details = attendanceRecords.map((record: any) => ({
+      class_date: getDate(record.date_class_was_held),
+      status: record.status,
+      check_in_time: getTime(record.check_in_time),
+    }));
+
+    const courseDetails = attendanceRecords[0].course;
+    const lecturerDetails = attendanceRecords[0].lecturer;
+
+    const data = {
+      course_code: courseDetails.course_code,
+      course_name: courseDetails.course_name,
+      course_time: `${courseDetails.start_time} - ${courseDetails.end_time}`,
+      semester: courseDetails.semester,
+      lecturer: `${lecturerDetails.first_name} ${lecturerDetails.last_name}`,
+      lecturer_email: lecturerDetails.email,
+      attendance_details,
+    };
+
+    res.status(200).json({data, message: "Attendance record retrieved successfully."});
   } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Error marking attendance" });
@@ -198,6 +227,20 @@ const addCourseOfferedByStudent = async (student_id: string, course_id: string) 
     console.error(`Error adding course to student: ${error.message}`);
   }
 }
+
+function getDate(isoTimestamp: string): string {
+  const date = new Date(isoTimestamp);
+  // Format the date as YYYY-MM-DD
+  return date.toISOString().split('T')[0];
+}
+
+
+function getTime(isoTimestamp: string): string {
+  const date = new Date(isoTimestamp);
+  // Format the time as HH:mm:ss
+  return date.toTimeString().split(' ')[0];
+}
+
 
 export {
     markAttendance,
