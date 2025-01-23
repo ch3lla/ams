@@ -1,17 +1,31 @@
 import { Request, Response } from 'express';
 import Student from '../../models/STUDENT';
 import Lecturer from '../../models/LECTURER';
+import Department from '../../models/DEPARTMENT';
 
 const registerStudent = async (req: Request, res: Response) => {
     const studentData = req.body;
+
+    console.log(req.body)
         const alreadyExists = await Student.findOne({ matric_number: req.body.matric_number});
 
         if (alreadyExists) {
             res.status(400).json({ message: 'This matric_number belongs to an account.' });
             return;
-          }
+        }
 
     try {
+        // if (!studentData.department || !studentData.level || !studentData.email || !studentData.first_name || !studentData.last_name || !studentData.matric_number || !studentData.password) {
+        //     return res.status(400).json({ message: 'Please fill all the required fields' });
+        // }
+
+        const dept = studentData.department;
+
+        studentData.department = await Department.findOne({ name: dept }).select('_id');
+
+        studentData.course_of_study = dept;
+
+
         if (typeof studentData !== 'object' || Object.keys(studentData).length === 0) {
             res.status(400).json({ message: 'Please fill all the required fields' });
             return;
@@ -53,13 +67,18 @@ const registerLecturer = async (req: Request, res: any) => {
     }
     try {      
 
+        const dept = lecturerData.department;
+
+        lecturerData.department = await Department.findOne({ name: dept }).select('_id');
+
+
         const lecturer = new Lecturer(lecturerData);
         await lecturer.save();
         const token = await lecturer.generateAuthToken();
         res.status(201).json({ message: "Lecturer registered successfully", accessToken: token });
 
     } catch (error) {
-        console.error
+        console.error(error)
         res.status(500).json({ message: 'An error occurred while registering the lecturer.' });
     }
 };
