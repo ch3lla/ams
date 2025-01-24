@@ -5,8 +5,6 @@ import Department from '../../models/DEPARTMENT';
 
 const registerStudent = async (req: Request, res: Response) => {
     const studentData = req.body;
-
-    console.log(req.body)
         const alreadyExists = await Student.findOne({ matric_number: req.body.matric_number});
 
         if (alreadyExists) {
