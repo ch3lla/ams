@@ -11,11 +11,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "geolib": "^3.3.4",
     "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.1",
     "morgan": "^1.10.0",
     "pg": "^8.13.0",
     "qrcode": "^1.5.4",
@@ -28,6 +31,7 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.7.5",
     "@types/pg": "^8.11.10",
+    "@types/qrcode": "^1.5.5",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"

@@ -1,32 +1,49 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, JoinTable, Timestamp } from "typeorm";
-import { Course } from "./COURSE";
-import { Lecturer } from "./LECTURER";
-import { Student } from "./STUDENT";
-
-
-@Entity()
-export class Attendance {
-    @PrimaryGeneratedColumn("uuid")
-    id!: string;
-
-    @ManyToOne(() => Lecturer, lecturer => lecturer)
-    lecturer!: Lecturer;
-
-    @ManyToOne(() => Student, student => student)
-    student!: Student;
-
-    @ManyToOne(() => Course, course => course)
-    course!: Course;
-
-    @Column("date")
-    date_class_was_held!: Date;
-
-    @Column({
-        type: "enum",
-        enum: ["PRESENT", "ABSENT"],
-    })
-    status!: "PRESENT" | "ABSENT";
-
-    @Column("timestamp")
-    check_in_time!: Timestamp;
+import { Schema, model, Document, Types } from "mongoose";
+interface IAttendance extends Document {
+    lecturer: Types.ObjectId;
+    student: Types.ObjectId;
+    course: Types.ObjectId;
+    date_class_was_held: Date;
+    status: "PRESENT" | "ABSENT"; 
+    check_in_time: Date;
 }
+
+const attendanceSchema = new Schema<IAttendance>({
+    lecturer: {
+        type: Schema.Types.ObjectId,
+        ref: 'Lecturer',
+        required: true
+    },
+    student: {
+        type: Schema.Types.ObjectId,
+        ref: 'Student',
+        required: true
+    },
+    course: {
+        type: Schema.Types.ObjectId,
+        ref: 'Course',
+        required: true
+    },
+    date_class_was_held: {
+        type: Date,
+        required: true
+    },
+    status: {
+        type: String,
+        enum: ["PRESENT", "ABSENT"],
+        required: true
+    },
+    check_in_time: {
+        type: Date,
+        required: true
+    }
+}, {
+    timestamps: true
+});
+
+attendanceSchema.index({ student: 1, course: 1 });
+attendanceSchema.index({ updatedAt: -1 });
+
+const Attendance = model<IAttendance>('Attendance', attendanceSchema);
+
+export default Attendance;

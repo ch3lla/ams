@@ -1,43 +1,39 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
-import { Geofence } from "./GEOFENCE";
-import { Attendance } from "./ATTENDANCE";
-import { Department } from "./DEPARTMENT";
-import { Lecturer } from "./LECTURER";
-import { Student } from "./STUDENT";
+import { Schema, model, Types, Document } from "mongoose";
+import Venue from "./VENUE";
 
-@Entity()
-export class Course {
-    @PrimaryGeneratedColumn("uuid")
-    id!: string;
-
-    @ManyToOne(() => Lecturer, lecturer => lecturer)
-    lecturer!: Lecturer;
-
-    @Column({ unique: true })
-    course_code!: string;
-
-    @Column()
-    course_name!: string;
-
-    @Column({ nullable: true })
-    qr_code!: string;
-
-    @Column({
-        type: "enum",
-        enum: ["1", "2"],
-    })
-    semster!: "1" | "2";
-
-    @ManyToOne(() => Department, department => department.courses)
-    department!: Department;
-
-    @OneToMany(() => Attendance, attendance => attendance.course)
-    attendances!: Attendance[];
-
-    @ManyToMany(() => Student)
-    students!: Student[];
-
-    @ManyToMany(() => Geofence)
-    @JoinTable()
-    venue!: Geofence;
+interface ICourse extends Document {
+  lecturer: Types.ObjectId;
+  course_code: string;
+  course_name: string;
+  qr_code?: string;
+  semester: "1" | "2";
+  department: Types.ObjectId;
+  attendances: Types.ObjectId[];
+  // students: Types.ObjectId[];
+  venue: Types.ObjectId;
+  start_time: string;
+  end_time: string;
 }
+
+const courseSchema = new Schema<ICourse>({
+  lecturer: { type: Schema.Types.ObjectId, ref: "Lecturer", required: true },
+  course_code: { type: String, unique: true, required: true },
+  course_name: { type: String, required: true },
+  // qr_code: { type: String, default: null },
+  semester: { type: String, enum: [1, 2], required: true },
+  department: {
+    type: Schema.Types.ObjectId,
+    ref: "Department",
+    required: true,
+  },
+  //attendances: [{ type: Schema.Types.ObjectId, ref: "Attendance" }],
+  // students: [{ type: Schema.Types.ObjectId, ref: "Student" }],
+  venue: { type: Schema.Types.ObjectId, ref: "Venue" },
+  start_time: { type: String, required: true }, // Single timestamp
+  end_time: { type: String, required: true },
+}, {
+  timestamps: true
+});
+
+const Course = model<ICourse>("Course", courseSchema);
+export default Course;
