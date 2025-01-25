@@ -69,7 +69,9 @@ const markAttendance = async (req: any, res: any) => {
 
     const distance = calculateDistance(current_location.latitude, current_location.longitude,  venue.latitude, venue.longitude);
 
-    const THRESHOLD_DISTANCE = 20;
+    console.log(`Calculated Distance: ${distance} meters`);
+
+    const THRESHOLD_DISTANCE = 50;
 
     if (distance < THRESHOLD_DISTANCE){
      const todays_attendance = new Attendance({

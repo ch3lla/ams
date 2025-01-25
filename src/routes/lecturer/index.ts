@@ -1,7 +1,7 @@
 import express from 'express';
 import { authenticateLecturer } from '../../middleware/auth';
 import { addCourse, getSingleCourse, removeCourse, updateCourse, viewAllCourses, generateQRCodeForCourse } from '../../controllers/courses';
-import { getAttendanceForCousrseOnASpecificDate, updateStudentAttendanceRecord } from "../../controllers/lecturer";
+import { getAttendanceForCousrseOnASpecificDate, updateStudentAttendanceRecord, exportAttendanceToPDF } from "../../controllers/lecturer";
 const router = express.Router();
 
 // LECTURER ROUTES
@@ -14,6 +14,7 @@ router.patch('/courses/:courseId', authenticateLecturer, updateCourse);
 router.delete('/courses/:courseId', authenticateLecturer, removeCourse);
 
 router.put('/courses/attendance/:attendance_id', authenticateLecturer, updateStudentAttendanceRecord);
+router.get('/courses/attendance/export/:course_id', authenticateLecturer, exportAttendanceToPDF);
 
 
 export default router;
