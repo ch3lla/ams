@@ -1,11 +1,12 @@
 import { NextFunction, Response } from "express";
 import { verify, sign } from "jsonwebtoken";
 
-export const authenticate = (req: any, res: Response, next: NextFunction) => {
+export const authenticate = (req: any, res: Response, next: NextFunction): void => {
     const { authorization } = req.headers;
 
     if (!authorization || !authorization.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'No Token, please login.' });
+        res.status(401).json({ error: 'No Token, please login.' });
+        return;
     }
 
     const token = authorization.split(' ')[1];
