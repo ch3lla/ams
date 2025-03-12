@@ -300,7 +300,7 @@ const exportAttendanceToPDF = async (req: any, res: any) => {
 
         const htmlContent = generateAttendanceTableHTML(attendanceRecords);
 
-        const pdfOptions = {
+        const pdfOptions: pdf.CreateOptions = {
             format: 'A4',
             orientation: 'portrait',
             border: {
