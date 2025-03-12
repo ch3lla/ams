@@ -27,7 +27,8 @@ async function getVenueCoordinates(venueName: string): Promise<{ latitude: numbe
                 latitude: location.lat,
                 longitude: location.lng
             };
-            return await addVenueToSchema({venueName, venue});
+            await addVenueToSchema({venueName, venue});
+            return venue;
         } else {
             console.error('No results found for the specified venue.');
             return null;
