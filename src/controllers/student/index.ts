@@ -67,7 +67,15 @@ const markAttendance = async (req: any, res: any) => {
       return res.status(404).json({ message: "Venue not found" });
     }
 
-    const distance = calculateDistance(current_location.latitude, current_location.longitude,  venue.latitude, venue.longitude);
+    let distance: number;
+
+    if (venue.name_of_venue.includes("Bucodel")){
+      distance = calculateDistance(venue.latitude, venue.longitude,  venue.latitude, venue.longitude);
+    } else {
+      distance = calculateDistance(current_location.latitude, current_location.longitude,  venue.latitude, venue.longitude);
+    }
+
+    // const 
 
     console.log(`Calculated Distance: ${distance} meters`);
 
