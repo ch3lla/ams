@@ -75,7 +75,7 @@ const updateStudentAttendanceRecord = async (req: any, res: any) => {
     const { status } = req.body;
 
     if (!attendance_id || !status) {
-        return res.status(400).json({messag: "Invalid parametes"});
+        return res.status(400).json({messag: "Invalid parameters"});
     }
 
     try {
