@@ -27,7 +27,7 @@ const markAttendance = async (req: any, res: any) => {
   const { _id } = req.user;
   const { course_id, current_location } = req.body;
   // const { qrCodeData } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
 
   if (!course_id || !current_location){
     return res.status(401).json({ message: "Neccessary parameters are missing, try again"});
